@@ -24,7 +24,8 @@ struct NetworkTests {
     let url = try #require(Bundle.module.url(forResource: "pairing", withExtension: "json"))
     let fixture = try JSONDecoder().decode([String: String].self, from: Data(contentsOf: url))
     func bytes(_ key: String) throws -> Data {
-      try #require(Data(base64Encoded: try #require(fixture[key])))
+      let text = try #require(fixture[key])
+      return try #require(Data(base64Encoded: text))
     }
     let joiner = try P256.KeyAgreement.PrivateKey(rawRepresentation: bytes("joinerPrivate"))
     let host = try P256.KeyAgreement.PrivateKey(rawRepresentation: bytes("hostPrivate"))
