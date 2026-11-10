@@ -1,0 +1,12 @@
+{
+  "aad" : "zone/1\naaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa\nbbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+  "description" : "PUBLIC TEST VECTOR. Never use this key or fixed nonce for real pairing.",
+  "envelope" : {
+    "recipient" : "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+    "sealed" : "AAECAwQFBgcICQoLPCC3eLGMrXWve7X4yIcbT6/07lDSQX1NCVbUtCxYMZ8wIZ/NgvUjqUWJR9y5tgUJ32hRvGvnkusOphs7NMGGh55fo1jp4VuPTOQ6ATJT31H0U7dV67t9",
+    "sender" : "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+    "version" : 1
+  },
+  "key" : "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=",
+  "plaintext" : "{\"action\":\"sync\",\"id\":\"11111111-1111-4111-8111-111111111111\",\"since\":0}"
+}

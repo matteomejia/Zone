@@ -1,0 +1,67 @@
+name: Draft macOS release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: macos-release
+  cancel-in-progress: false
+
+jobs:
+  macos:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-26
+            arch: arm64
+          - runner: macos-26-intel
+            arch: x86_64
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Native tests
+        run: scripts/macos.sh test
+        env:
+          ZONE_ARCH: ${{ matrix.arch }}
+      - name: Build disk image
+        run: scripts/macos.sh package
+        env:
+          ZONE_ARCH: ${{ matrix.arch }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Zone-macos-${{ matrix.arch }}
+          path: artifacts/*.dmg
+          if-no-files-found: error
+
+  draft:
+    needs: macos
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+      - name: Attach successful builds to a draft
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_COMMIT: ${{ github.sha }}
+        run: |
+          VERSION=$(python3 -c 'import plistlib; print(plistlib.load(open("apps/macos/Info.plist", "rb"))["CFBundleShortVersionString"])')
+          TAG="v$VERSION"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            test "$(gh release view "$TAG" --json isDraft --jq .isDraft)" = true || {
+              echo "This version is already published. Bump the version before building another release."
+              exit 1
+            }
+          else
+            gh release create "$TAG" --target "$RELEASE_COMMIT" --title "Zone $TAG" --draft --prerelease --notes-file .github/release-notes.txt
+          fi
+          gh release upload "$TAG" artifacts/*.dmg --clobber

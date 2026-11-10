@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+  <key>CFBundleName</key><string>Zone</string>
+  <key>CFBundleDisplayName</key><string>Zone</string>
+  <key>CFBundleIdentifier</key><string>app.zone.scratchpad</string>
+  <key>CFBundleExecutable</key><string>Zone</string>
+  <key>CFBundleIconFile</key><string>Zone</string>
+  <key>CFBundlePackageType</key><string>APPL</string>
+  <key>CFBundleShortVersionString</key><string>0.1.0</string>
+  <key>CFBundleVersion</key><string>0.1.0</string>
+  <key>LSMinimumSystemVersion</key><string>26.0</string>
+  <key>LSApplicationCategoryType</key><string>public.app-category.productivity</string>
+  <key>LSUIElement</key><true/>
+  <key>NSHighResolutionCapable</key><true/>
+  <key>NSPrincipalClass</key><string>NSApplication</string>
+  <key>NSLocalNetworkUsageDescription</key>
+  <string>Zone connects to your paired devices on the local network to synchronize your scratchpad.</string>
+  <key>NSBonjourServices</key><array><string>_zone-pad._tcp</string></array>
+</dict></plist>
