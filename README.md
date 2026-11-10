@@ -55,3 +55,7 @@ Packaging produces an architecture-specific `.dmg` in `artifacts/`. The app is a
 The build script uses the installed macOS 26 SDK when running with Command Line Tools that ship an incomplete macOS 27 SwiftUI macro setup. Full Xcode uses its default SDK. Set `ZONE_MACOS_SDK` to override the SDK path.
 
 The **Draft macOS release** GitHub workflow is manual. It tests/builds Apple Silicon and Intel disk images, then attaches both to a draft prerelease only if both jobs succeed. It will not modify a published release. Change the version in `apps/macos/Info.plist` before a new release. There is no Windows artifact yet. Nothing is pushed, tagged, or published by local build commands.
+
+## License
+
+[MIT](LICENSE)
