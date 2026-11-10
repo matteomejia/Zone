@@ -1,3 +1,4 @@
+import CryptoKit
 import Foundation
 import Testing
 
@@ -17,6 +18,33 @@ struct NetworkTests {
     #expect(actual.id == expected.id)
     #expect(actual.action == expected.action)
     #expect(actual.since == expected.since)
+  }
+
+  @Test func testWindowsPairingFixture() throws {
+    let url = try #require(Bundle.module.url(forResource: "pairing", withExtension: "json"))
+    let fixture = try JSONDecoder().decode([String: String].self, from: Data(contentsOf: url))
+    func bytes(_ key: String) throws -> Data {
+      try #require(Data(base64Encoded: try #require(fixture[key])))
+    }
+    let joiner = try P256.KeyAgreement.PrivateKey(rawRepresentation: bytes("joinerPrivate"))
+    let host = try P256.KeyAgreement.PrivateKey(rawRepresentation: bytes("hostPrivate"))
+    let joinerPublic = try bytes("joinerPublic")
+    let hostPublic = try bytes("hostPublic")
+    #expect(joiner.publicKey.x963Representation == joinerPublic)
+    #expect(host.publicKey.x963Representation == hostPublic)
+    #expect(Codec.commitment(joinerPublic) == fixture["commit"])
+    // Each side derives the same key and code from its own private key.
+    for (secret, remote) in [(joiner, hostPublic), (host, joinerPublic)] {
+      let secrets = try Codec.joinSecrets(
+        secret, remote: remote, joiner: joinerPublic, host: hostPublic)
+      #expect(secrets.key == fixture["key"])
+      #expect(secrets.code == fixture["code"])
+    }
+    let group = try #require(fixture["group"])
+    let a = try #require(fixture["deviceA"])
+    let b = try #require(fixture["deviceB"])
+    #expect(try Codec.pairKey(group: group, a, b) == fixture["pairKey"])
+    #expect(try Codec.pairKey(group: group, b, a) == fixture["pairKey"])
   }
 
   private func localInvitation(_ engine: ZoneEngine) async throws -> String {

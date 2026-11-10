@@ -18,6 +18,18 @@ For two-device checks, use another compatible Mac now, or the future Windows imp
 
 Before publication, install every disk image on a clean supported Mac, verify signing/notarization as configured, and repeat the pairing/file checks. Local automated TCP tests do not replace this procedure. Windows runtime behavior remains unverified until its implementation is tested on Windows.
 
+## Starting the Windows client
+
+Build in this order, so that each step is checked against the Mac before the next depends on it:
+
+1. **Codec.** Reproduce both public fixtures (message encryption, then pairing) in unit tests. Nothing on the network yet.
+2. **Discovery.** Advertise `_zone-pad._tcp` with the `id` and `name` TXT record and browse for others. Success is the Windows device appearing in the Mac's **+** panel and the Mac appearing on Windows. This is the least certain part on Windows; settle it before any interface work.
+3. **Join.** Run a join in both directions against the Mac and confirm the codes match on both screens.
+4. **Sync.** Pull the Mac's board, then serve the Windows board to the Mac. Check text, an image, and a file near 8 MiB.
+5. **Interface.** Tabs, the free-form board, and the sink, matching the Mac's behaviour described in the README.
+
+The Mac build has only been exercised on one machine. A disagreement between the two clients may be a Mac bug or an unclear sentence below rather than a Windows mistake; fix the document along with the code.
+
 ## Protocol v1: native Swift / future C#
 
 All integers are JSON integers; timestamps are Unix milliseconds. IDs are case-sensitive strings. New device and note IDs are lowercase UUIDs. A migrated prototype device may retain its previous public-key-shaped ID (up to 128 UTF-8 bytes). Validate device names (1–100 UTF-8 bytes), platform (up to 32 bytes), and IDs before storing them.
@@ -68,6 +80,8 @@ Every device holds a 32-byte group key, random at first launch. Every `paired` r
 Two devices in one group share the key HKDF-SHA256(group key, empty salt, info = UTF-8 `zone/1 pair\n{id1}\n{id2}`, 32 bytes), with the two device IDs ordered by their UTF-8 bytes. A device sends an ordinary `pair` request, encrypted with that key, to each listed nearby device it is not paired with, at most every 30 seconds per device. The receiver tries that key for any message from an unpaired sender; if it opens a valid `pair`, it stores the pair with that key and replies `paired`. Devices outside the group cannot open the message and send nothing.
 
 Forgetting a device adds its ID to a local block list: do not offer it group pairing and do not accept group pairing from it. An approved join or an invitation involving that device removes the block. The group key is not changed, so every member can derive every pair key in the group, and a former member still holds the key; state this limit in any security claims.
+
+The [public pairing fixture](../apps/macos/Tests/ZoneKitTests/Fixtures/pairing.json) gives both private keys, both public keys, the commitment, and the expected pairing key and code for one join, plus a group key, two device IDs, and their expected pair key. A Windows implementation must reproduce every value from the private keys before attempting a live join.
 
 ### Framing and authentication
 

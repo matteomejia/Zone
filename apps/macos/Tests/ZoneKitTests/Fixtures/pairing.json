@@ -1,0 +1,14 @@
+{
+  "code": "579019",
+  "commit": "7ruzBJQKgQVBpbKjwSCSzaMwG0lxeucLYA/W4X5zslc=",
+  "description": "PUBLIC TEST VECTOR. Never use these keys for real pairing. Private keys are raw 32-byte P-256 scalars; public keys are 65-byte uncompressed points.",
+  "deviceA": "b7e2c1d4-0000-4000-8000-00000000000b",
+  "deviceB": "3f9a0c55-0000-4000-8000-00000000000a",
+  "group": "HwNRMuY1bRL86+VaJgQbiuQff5inmcyN5aNsin8Zf3s=",
+  "hostPrivate": "ahL8EflW7B8aze5Zi2s2nUJCI/ffHRmNA9riHsUSeI0=",
+  "hostPublic": "BDK+a87UO3UwxnHm8YYR2SCZJzSRZMe1jNQFVx8yj4jSVOrg6WlBQcuPnP1mS2TtKwwOkRAzc+kngeJ3Kgtmcgg=",
+  "joinerPrivate": "FndZ4Pb1xcJoy2Kit1IpeTfYouWjkB0PXD7OXGdOnnI=",
+  "joinerPublic": "BETXsahyk/rh1Zz/tg/KJ9p5K/ipT4kEdiEJJvowDyRLlXMxYV7YZlleu5/9jv/M7s3072SxXPErKI49WXwqSQo=",
+  "key": "sUOzOqGgd8iXfxlwdi5CYCCJQ0VGHG1Ehvgy44QW54M=",
+  "pairKey": "XiwXr/H8GK7kSp6BipIXOgMIl5WCbRfcYwtSnDJgLe8="
+}
