@@ -20,6 +20,25 @@ Before publication, install every disk image on a clean supported Mac, verify si
 
 ## Starting the Windows client
 
+The initial Windows codec and discovery probe are in `apps/windows`; see its
+[run instructions and verification limits](../apps/windows/README.md). The codec
+reproduces both public fixtures on Windows. Native DNS-SD registration and timed
+shutdown have been exercised locally. On 2026-11-09, the user confirmed the MacBook
+lists the Windows desktop. After fixing the Windows browse query's trailing dot,
+the Windows diagnostic probe also resolved the MacBook with its identity, host,
+port and addresses. Discovery works in both directions on this LAN; joining and
+matching codes against the Mac is the next acceptance gate. Windows nearby joining,
+approval, decline, expiry and SQLite identity/key storage are implemented and tested
+over local TCP in both directions. Use `scripts/windows.ps1 pair` for the live check.
+The user confirmed successful console pairing with the Mac. At their request, the UI
+milestone was brought forward before sync: `scripts/windows.ps1 run` opens a WinUI panel
+modelled on the Mac notebook, with device tabs, a free-form board of draggable cards
+(arrangement is local to the PC and never synced) and a code-comparison pairing dialog. Owner-only text/image/file sync, offline caching, atomic cursor commits and
+tombstones are now implemented and locally TCP-tested. The desktop app successfully
+pulled the live Mac board, including a tombstone and a rendered PNG. Reverse transfer,
+cross-device large-file saving and interruption/recovery checks remain pending. See
+the Windows README's sync checks. Invitation and automatic group pairing are pending.
+
 Build in this order, so that each step is checked against the Mac before the next depends on it:
 
 1. **Codec.** Reproduce both public fixtures (message encryption, then pairing) in unit tests. Nothing on the network yet.
@@ -108,10 +127,10 @@ A fresh lowercase UUID `id` correlates each request with its response. The pair 
 Require the device ID to equal the envelope sender. The server accepts this only with its currently active invitation key, validates the record, stores the pair, and consumes the invitation. It returns the following response encrypted with the same key:
 
 ```json
-{"id":"same-request-uuid","kind":"paired","device":{"id":"inviter-id","name":"MacBook","platform":"macos"},"hosts":["192.168.1.10"],"port":54321}
+{"id":"same-request-uuid","kind":"paired","device":{"id":"inviter-id","name":"MacBook","platform":"macos"},"hosts":["192.168.1.10"],"port":54321,"group":"base64-of-32-byte-group-key"}
 ```
 
-The caller verifies the response ID and authenticated device identity, then stores that peer and key. An invalid or unauthenticated request gets no content. There is no global group key or transitive pairing.
+The caller verifies the response ID and authenticated device identity, then stores that peer and key and adopts the returned group key as described under **Groups**. An invalid or unauthenticated request gets no content. Group membership enables automatic direct pairing; devices never relay another owner's board.
 
 ### Pull changes
 

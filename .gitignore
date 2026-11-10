@@ -4,3 +4,6 @@ target/
 artifacts/
 .build/
 .swiftpm/
+apps/windows/**/bin/
+apps/windows/**/obj/
+apps/windows/**/TestResults/

@@ -32,7 +32,7 @@ Where devices cannot see each other on the network, **+ → Use an invitation in
 
 Local discovery uses Bonjour/mDNS (`_zone-pad._tcp.local.`); encrypted messages travel directly over TCP. The advertisement includes the device's ID and name, so others on the network can see that a device named, say, "Francisco's MacBook Pro" runs Zone. No public relays, NAT traversal, internet discovery, accounts, or Bluetooth are used. Direct address fallback accepts private/link-local/loopback IPv4 addresses. Bonjour can also resolve local IPv6 endpoints. Guest-network isolation, firewalls, or blocked multicast can prevent connectivity. A fresh invitation can update a changed address if Bonjour is blocked.
 
-The Windows frontend will be developed separately on the Windows desktop with WinUI and C#. It is not implemented or build-verified here. The wire protocol and a public encryption fixture are provided below for that work.
+The Windows C# app has a native WinUI interface modelled on the Mac notebook: device tabs with presence dots, a free-form board of draggable cards (positions stay on the PC), paste/drop/type ingestion, pairing, automatic text/image/file sync, offline caches and attachment save controls. Run `./scripts/windows.ps1 run`. It reuses the console probe's SQLite identity and keys. Discovery and console pairing were confirmed with a MacBook; live Mac-to-Windows board receiving and PNG rendering also work. The reverse transfer, large-file save and cross-device recovery checks remain to be completed. See the [Windows milestone and commands](apps/windows/README.md).
 
 ## Storage and prototype migration
 
@@ -54,7 +54,7 @@ Packaging produces an architecture-specific `.dmg` in `artifacts/`. The app is a
 
 The build script uses the installed macOS 26 SDK when running with Command Line Tools that ship an incomplete macOS 27 SwiftUI macro setup. Full Xcode uses its default SDK. Set `ZONE_MACOS_SDK` to override the SDK path.
 
-The **Draft macOS release** GitHub workflow is manual. It tests/builds Apple Silicon and Intel disk images, then attaches both to a draft prerelease only if both jobs succeed. It will not modify a published release. Change the version in `apps/macos/Info.plist` before a new release. There is no Windows artifact yet. Nothing is pushed, tagged, or published by local build commands.
+The **Draft macOS release** GitHub workflow is manual. It tests/builds Apple Silicon and Intel disk images, then attaches both to a draft prerelease only if both jobs succeed. It will not modify a published release. Change the version in `apps/macos/Info.plist` before a new Mac release. On Windows, `./scripts/windows.ps1 package` produces a portable x64 ZIP with the runtimes and a SHA256 checksum. The manual **Attach Windows release** workflow can add those assets to an existing matching release without replacing downloads or moving its tag; change `apps/windows/Directory.Build.props` for a new Windows version. Nothing is pushed, tagged, or published by local build/package commands.
 
 ## License
 

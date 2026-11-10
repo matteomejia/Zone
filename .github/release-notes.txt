@@ -1,9 +1,11 @@
-Zone is a local-first shared scratchpad for macOS. Paste, drop, or type anything and it appears as a card on a board that your other Macs on the same network can see. No account and no server.
+Zone is a local-first shared scratchpad for macOS and Windows. Paste, drop, or type anything and it appears as a card on a board that your paired devices on the same network can see. No account and no server.
 
 Requires macOS 26 or later. Download the disk image for your Mac (arm64 for Apple Silicon, x86_64 for Intel where provided), open it, and drag Zone into Applications.
 
 This build is not notarized by Apple, so macOS will refuse to open it the first time. Try to open it once, then go to System Settings → Privacy & Security and click "Open Anyway".
 
-To connect two Macs, open + on both, click Connect on one, and approve on the other when both show the same code.
+Windows x64: download the Windows ZIP, extract the entire folder, and run Zone.Desktop.exe. Windows 10 version 2004 or newer is required. The .NET and Windows App SDK runtimes are included. This is an unsigned early Windows build; read README.txt and BUILD-INFO.json inside the ZIP. Its SHA256 checksum is provided alongside the download.
 
-This is an early version. It has automated tests but has had little testing between separate machines. There is no Windows or mobile app yet.
+To connect devices, open + on both, click Connect on one, and approve on the other when both show the same code.
+
+This is an early version. Automated tests and Mac/Windows pairing and sync have been exercised, but clean Windows installation and broader hardware/accessibility testing are still pending. Windows invitations, automatic group introduction, Forget and renaming are not implemented. There is no mobile app yet.

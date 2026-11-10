@@ -1,0 +1,59 @@
+name: Attach Windows release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Existing release tag matching the Windows version
+        required: true
+        default: v0.1.0
+
+permissions:
+  contents: read
+
+concurrency:
+  group: windows-release
+  cancel-in-progress: false
+
+jobs:
+  windows:
+    runs-on: windows-2022
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Check release version
+        shell: pwsh
+        env:
+          RELEASE_TAG: ${{ inputs.release_tag }}
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          [xml]$properties = Get-Content apps/windows/Directory.Build.props
+          if ($env:RELEASE_TAG -ne "v$($properties.Project.PropertyGroup.Version)") { throw 'Release tag must match the Windows version.' }
+          gh release view $env:RELEASE_TAG
+          if ($LASTEXITCODE -ne 0) { throw 'Create the release before attaching Windows assets.' }
+      - name: Test core
+        shell: pwsh
+        run: ./scripts/windows.ps1 test
+      - name: Build portable Windows package
+        shell: pwsh
+        run: ./scripts/windows.ps1 package
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Zone-windows-x64
+          path: artifacts/Zone-*-windows-x64.zip*
+          if-no-files-found: error
+      - name: Attach new assets without replacing existing downloads
+        shell: pwsh
+        env:
+          RELEASE_TAG: ${{ inputs.release_tag }}
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          $assets = @(Get-ChildItem artifacts/Zone-*-windows-x64.zip* | ForEach-Object FullName)
+          gh release upload $env:RELEASE_TAG @assets
+          if ($LASTEXITCODE -ne 0) { throw 'Upload failed; existing assets are never overwritten.' }

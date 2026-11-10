@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
+    <RootNamespace>Zone.Desktop</RootNamespace>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Platforms>x64</Platforms>
+    <PlatformTarget>x64</PlatformTarget>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <UseWinUI>true</UseWinUI>
+    <WindowsPackageType>None</WindowsPackageType>
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.260921001" />
+    <ProjectReference Include="../Zone.Core/Zone.Core.csproj" />
+  </ItemGroup>
+  <!-- The WinUI 1.8 publish targets omit the app's XAML resource files from an
+       unpackaged publish. Keep them with the executable, as in the build output. -->
+  <Target Name="PublishZoneXamlResources" AfterTargets="Publish">
+    <ItemGroup>
+      <ZoneXamlResources Include="$(OutDir)App.xbf;$(OutDir)$(AssemblyName).pri" />
+    </ItemGroup>
+    <Error Condition="!Exists('$(OutDir)App.xbf') Or !Exists('$(OutDir)$(AssemblyName).pri')" Text="Compiled Zone XAML resources are missing." />
+    <Copy SourceFiles="@(ZoneXamlResources)" DestinationFolder="$(PublishDir)" SkipUnchangedFiles="true" />
+  </Target>
+</Project>
